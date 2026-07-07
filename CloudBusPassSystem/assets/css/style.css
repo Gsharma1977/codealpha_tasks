@@ -1,0 +1,108 @@
+:root {
+    --primary: #1e4d8b;
+    --primary-dark: #143560;
+    --accent: #f5a623;
+    --light-bg: #f4f7fb;
+}
+
+body {
+    background-color: var(--light-bg);
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.navbar-custom {
+    background-color: var(--primary-dark);
+}
+
+.navbar-custom .nav-link, .navbar-custom .navbar-brand {
+    color: #ffffff !important;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    padding: 90px 0 70px;
+}
+
+.hero-section h1 {
+    font-weight: 700;
+}
+
+.btn-accent {
+    background-color: var(--accent);
+    color: #fff;
+    border: none;
+}
+
+.btn-accent:hover {
+    background-color: #d9890f;
+    color: #fff;
+}
+
+.card-feature {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+    height: 100%;
+}
+
+.card-feature:hover {
+    transform: translateY(-5px);
+}
+
+.section-title {
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 30px;
+}
+
+.auth-card {
+    max-width: 480px;
+    margin: 60px auto;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.dashboard-card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+}
+
+.pass-card {
+    border: 2px dashed var(--primary);
+    border-radius: 14px;
+    background: #fff;
+    max-width: 480px;
+    margin: 20px auto;
+}
+
+.pass-header {
+    background: var(--primary-dark);
+    color: #fff;
+    border-radius: 10px 10px 0 0;
+    padding: 12px 20px;
+}
+
+footer {
+    background-color: var(--primary-dark);
+    color: #fff;
+    padding: 25px 0;
+    margin-top: 60px;
+}
+
+.status-badge-Approved, .status-Active { background-color: #1e7e34; }
+.status-badge-Pending, .status-Pending { background-color: #d39e00; }
+.status-badge-Rejected, .status-Rejected, .status-Cancelled { background-color: #c82333; }
+
+table.table-modern thead {
+    background-color: var(--primary-dark);
+    color: #fff;
+}
