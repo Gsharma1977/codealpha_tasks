@@ -1,122 +1,56 @@
-# Data Redundancy System
+# Summer Internship Projects
 
-## Overview
+This repository contains the projects completed during my **Summer Internship** as part of my **B.Tech Computer Science Engineering** curriculum. These projects demonstrate my understanding of software development, database management, web technologies, and problem-solving using different programming languages and frameworks.
 
-The **Data Redundancy System** is a Java-based application developed to identify and manage duplicate records stored in a database. The project helps improve data consistency, reduce unnecessary storage usage, and maintain database integrity by detecting redundant entries.
+## Projects Included
 
-This project was developed as part of a **Summer Internship** to gain practical experience with Java, JDBC, MySQL, and database management concepts.
+### 1. Data Redundancy System
 
----
+A Java-based application developed to identify and manage duplicate records in a database. The project uses Java, JDBC, and MySQL to improve data consistency, reduce redundant storage, and maintain database integrity.
 
-## Features
-
-* Detects duplicate records in the database.
-* Removes or manages redundant data.
-* Secure database connectivity using JDBC.
-* User-friendly interface for performing operations.
-* Efficient data retrieval and management.
-* Improves database consistency and storage utilization.
+**Technologies:** Java, JDBC, MySQL
 
 ---
 
-## Technologies Used
+### 2. Cloud Bus Pass System
 
-* Java
-* JDBC (Java Database Connectivity)
-* MySQL
-* HTML/CSS 
-* JavaScript 
-* Apache 
+A web-based application that automates the bus pass registration and management process. It allows students to apply for bus passes online while providing administrators with features to verify, approve, and manage applications efficiently.
+
+**Technologies:** PHP, MySQL, HTML, CSS, JavaScript, Bootstrap
 
 ---
 
-## Project Structure
+## Repository Structure
 
 ```text
-Data-Redundancy-System/
-│── src/                 # Java source code
-│── sql/                 # Database scripts
-│── web/                 # Web resources (if applicable)
-│── compile.sh           # Compilation script
-│── run.sh               # Execution script
-│── README.md
+Summer-Internship-Projects/
+│
+├── Data-Redundancy-System/
+│
+├── CloudBusPassSystem/
+│
+└── README.md
 ```
 
----
-
-## Prerequisites
-
-Before running the project, ensure the following are installed:
-
-* Java JDK 8 or above
-* MySQL Server
-* JDBC Driver
-* IDE (IntelliJ IDEA, Eclipse, or VS Code)
-
----
-
-## Installation & Setup
-
-1. Clone the repository.
-
-```bash
-git clone https://github.com/your-username/Data-Redundancy-System.git
-```
-
-2. Open the project in your preferred IDE.
-
-3. Create the MySQL database.
-
-4. Import the SQL file located in the `sql/` folder.
-
-5. Update the database credentials in the Java source code.
-
-6. Compile and run the project.
-
----
-
-## Working
-
-1. Connect to the MySQL database.
-2. Read records from the selected table.
-3. Detect duplicate entries.
-4. Display duplicate records.
-5. Remove or manage redundant records.
-6. Store the updated dataset.
-
----
-
-## Learning Outcomes
+## Skills Demonstrated
 
 * Java Programming
+* PHP Web Development
+* Database Design & Management
 * JDBC Connectivity
-* SQL Query Execution
-* Database Design
-* Data Redundancy Management
+* MySQL
+* CRUD Operations
+* Frontend Development
 * Problem Solving
-
----
-
-## Future Enhancements
-
-* Advanced duplicate detection algorithms.
-* Role-based authentication.
-* Automatic backup before deletion.
-* Data visualization dashboard.
-* Cloud database integration.
-
----
+* Software Project Organization
+* Version Control with Git & GitHub
 
 ## Author
 
 **Gaurav Sharma**
-
 B.Tech Computer Science Engineering
-
-Summer Internship Project
+Summer Internship Projects (2026)
 
 ---
 
-## License
-
-This project is intended for educational and learning purposes.
+*These projects were developed for educational and learning purposes during my summer internship.*
