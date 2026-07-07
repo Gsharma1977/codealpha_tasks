@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add Record – DRS</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <style>
+    body { background:#f0f2f5; }
+    .sidebar { width:240px; min-height:100vh; background:linear-gradient(180deg,#0f3460,#533483); position:fixed; }
+    .sidebar a { color:rgba(255,255,255,.8); text-decoration:none; display:block; padding:12px 20px; transition:.2s; }
+    .sidebar a:hover, .sidebar a.active { background:rgba(255,255,255,.15); color:#fff; }
+    .main { margin-left:240px; padding:24px; }
+  </style>
+</head>
+<body>
+<div class="sidebar d-flex flex-column pt-3">
+  <div class="text-center text-white py-3 mb-2"><h5 class="mb-0">🛡️ DRS Admin</h5></div>
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="add-record.html" class="active">➕ Add Record</a>
+  <a href="records.html">📋 All Records</a>
+  <a href="reports.html">📄 Reports</a>
+  <a href="#" onclick="sessionStorage.clear(); window.location.href='login.html'">🚪 Logout</a>
+</div>
+
+<div class="main">
+  <h4 class="fw-bold mb-4">Add New Record</h4>
+
+  <div id="alertBox" class="alert d-none" role="alert"></div>
+
+  <!-- Result panel shown after submission -->
+  <div id="resultPanel" class="card border-0 shadow-sm mb-4 d-none">
+    <div class="card-body">
+      <h6 class="fw-bold">Detection Result</h6>
+      <table class="table table-sm">
+        <tr><td>Status</td><td id="resStatus"></td></tr>
+        <tr><td>Reason</td><td id="resReason"></td></tr>
+        <tr><td>Saved to DB</td><td id="resSaved"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Record ID *</label>
+          <input id="recordId" class="form-control" placeholder="e.g. REC001" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Full Name *</label>
+          <input id="name" class="form-control" placeholder="e.g. Rahul Kumar" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Email *</label>
+          <input id="email" type="email" class="form-control" placeholder="e.g. rahul@gmail.com" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Phone (10-digit) *</label>
+          <input id="phone" class="form-control" placeholder="e.g. 9876543210" maxlength="10" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Department</label>
+          <select id="department" class="form-select">
+            <option value="">-- Select --</option>
+            <option>Computer Science</option>
+            <option>Electronics</option>
+            <option>Mechanical</option>
+            <option>Civil</option>
+            <option>HR</option>
+            <option>Finance</option>
+            <option>Marketing</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Address</label>
+          <input id="address" class="form-control" placeholder="Street, City, State" />
+        </div>
+        <div class="col-12 d-flex gap-2 mt-2">
+          <button class="btn btn-primary px-4" onclick="submitRecord()">Submit Record</button>
+          <button class="btn btn-outline-secondary" onclick="clearForm()">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Validation errors -->
+  <div id="valErrors" class="card border-0 shadow-sm mt-3 d-none">
+    <div class="card-header bg-danger text-white fw-semibold">Validation Errors</div>
+    <ul id="valList" class="list-group list-group-flush"></ul>
+  </div>
+</div>
+
+<script>
+  if (!sessionStorage.getItem('loggedIn')) window.location.href='login.html';
+
+  function submitRecord() {
+    const payload = {
+      recordId:   document.getElementById('recordId').value.trim(),
+      name:       document.getElementById('name').value.trim(),
+      email:      document.getElementById('email').value.trim(),
+      phone:      document.getElementById('phone').value.trim(),
+      department: document.getElementById('department').value,
+      address:    document.getElementById('address').value.trim()
+    };
+
+    fetch('/api/records', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(data => {
+      // Show validation errors
+      const valBox = document.getElementById('valErrors');
+      const valList = document.getElementById('valList');
+      if (data.validationErrors && data.validationErrors.length) {
+        valList.innerHTML = data.validationErrors.map(e =>
+          `<li class="list-group-item list-group-item-danger">${e}</li>`).join('');
+        valBox.classList.remove('d-none');
+      } else {
+        valBox.classList.add('d-none');
+      }
+
+      // Show result panel
+      if (data.status) {
+        const panel = document.getElementById('resultPanel');
+        panel.classList.remove('d-none');
+        const colors = {UNIQUE:'success',DUPLICATE:'danger',POTENTIAL_DUPLICATE:'warning',FALSE_POSITIVE:'secondary'};
+        document.getElementById('resStatus').innerHTML =
+          `<span class="badge bg-${colors[data.status]||'primary'}">${data.status}</span>`;
+        document.getElementById('resReason').textContent = data.reason || '—';
+        document.getElementById('resSaved').textContent  = data.saved ? '✅ Yes' : '❌ No (duplicate blocked)';
+      }
+
+      showAlert(data.message, data.saved ? 'success' : 'warning');
+    })
+    .catch(() => showAlert('Server error. Make sure Java server is running.','danger'));
+  }
+
+  function showAlert(msg, type) {
+    const el = document.getElementById('alertBox');
+    el.className = `alert alert-${type}`;
+    el.textContent = msg;
+    el.classList.remove('d-none');
+    setTimeout(() => el.classList.add('d-none'), 5000);
+  }
+
+  function clearForm() {
+    ['recordId','name','email','phone','address'].forEach(id => document.getElementById(id).value='');
+    document.getElementById('department').value='';
+    document.getElementById('resultPanel').classList.add('d-none');
+    document.getElementById('valErrors').classList.add('d-none');
+    document.getElementById('alertBox').classList.add('d-none');
+  }
+</script>
+</body>
+</html>

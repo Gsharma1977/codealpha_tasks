@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>All Records – DRS</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <style>
+    body { background:#f0f2f5; }
+    .sidebar { width:240px; min-height:100vh; background:linear-gradient(180deg,#0f3460,#533483); position:fixed; }
+    .sidebar a { color:rgba(255,255,255,.8); text-decoration:none; display:block; padding:12px 20px; transition:.2s; }
+    .sidebar a:hover, .sidebar a.active { background:rgba(255,255,255,.15); color:#fff; }
+    .main { margin-left:240px; padding:24px; }
+    .badge-UNIQUE{background:#28a745;color:#fff}
+    .badge-DUPLICATE{background:#dc3545;color:#fff}
+    .badge-POTENTIAL_DUPLICATE{background:#ffc107;color:#000}
+    .badge-FALSE_POSITIVE{background:#6c757d;color:#fff}
+  </style>
+</head>
+<body>
+<div class="sidebar d-flex flex-column pt-3">
+  <div class="text-center text-white py-3 mb-2"><h5 class="mb-0">🛡️ DRS Admin</h5></div>
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="add-record.html">➕ Add Record</a>
+  <a href="records.html" class="active">📋 All Records</a>
+  <a href="reports.html">📄 Reports</a>
+  <a href="#" onclick="sessionStorage.clear(); window.location.href='login.html'">🚪 Logout</a>
+</div>
+<div class="main">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">All Records</h4>
+    <select id="filterStatus" class="form-select w-auto" onchange="loadRecords()">
+      <option value="">All Status</option>
+      <option value="UNIQUE">Unique</option>
+      <option value="DUPLICATE">Duplicate</option>
+      <option value="POTENTIAL_DUPLICATE">Potential Duplicate</option>
+      <option value="FALSE_POSITIVE">False Positive</option>
+    </select>
+  </div>
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Record ID</th><th>Name</th><th>Email</th><th>Phone</th>
+              <th>Department</th><th>Status</th><th>Date</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"><tr><td colspan="8" class="text-center py-4">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  if (!sessionStorage.getItem('loggedIn')) window.location.href='login.html';
+
+  function loadRecords() {
+    const f = document.getElementById('filterStatus').value;
+    const url = f ? `/api/records?status=${f}` : '/api/records';
+    fetch(url)
+      .then(r => r.json())
+      .then(records => {
+        const tbody = document.getElementById('tbody');
+        if (!records.length) {
+          tbody.innerHTML='<tr><td colspan="8" class="text-center py-4">No records found.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = records.map(r => `
+          <tr>
+            <td><code>${r.recordId}</code></td>
+            <td>${r.name}</td>
+            <td>${r.email}</td>
+            <td>${r.phone}</td>
+            <td>${r.department||'—'}</td>
+            <td><span class="badge badge-${r.status} px-2 py-1">${r.status}</span></td>
+            <td>${r.dateCreated?r.dateCreated.substring(0,10):''}</td>
+            <td>
+              ${r.status==='POTENTIAL_DUPLICATE'
+                ?`<button class="btn btn-sm btn-outline-secondary me-1" onclick="markFP('${r.recordId}')">Mark FP</button>`:''}
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteRec('${r.recordId}')">Delete</button>
+            </td>
+          </tr>`).join('');
+      });
+  }
+
+  function deleteRec(id) {
+    if (!confirm('Delete record ' + id + '?')) return;
+    fetch('/api/records/' + id, {method:'DELETE'})
+      .then(r=>r.json()).then(d=>{alert(d.message); loadRecords();});
+  }
+
+  function markFP(id) {
+    fetch('/api/records/' + id + '/false-positive', {method:'PUT'})
+      .then(r=>r.json()).then(d=>{alert(d.message); loadRecords();});
+  }
+
+  loadRecords();
+</script>
+</body>
+</html>
